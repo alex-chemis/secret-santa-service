@@ -4,6 +4,7 @@ extern crate rocket;
 #[macro_use]
 extern crate diesel;
 
+pub mod api;
 pub mod database;
 pub mod errors;
 pub mod models;

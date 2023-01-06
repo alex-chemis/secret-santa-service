@@ -22,6 +22,15 @@ pub struct PartialMember {
 
 #[derive(Serialize, Queryable, Debug)]
 #[serde(crate = "rocket::serde")]
+pub struct NamedMember {
+    pub id: i32,
+    pub name: String,
+    pub group_id: i32,
+    pub is_admin: bool,
+}
+
+#[derive(Serialize, Queryable, Debug)]
+#[serde(crate = "rocket::serde")]
 pub struct IdMember {
     pub id: i32,
 }
