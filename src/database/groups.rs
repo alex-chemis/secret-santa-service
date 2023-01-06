@@ -61,3 +61,29 @@ pub fn destroy(
         Err(e) => Err(Error::Internal(e.to_string())),
     }
 }
+
+pub fn retrieve(
+    id: i32,
+    c: &diesel::PgConnection
+) -> Result<Group, Error> {
+    check_group_id(id, c)?;
+    match groups::table.filter(groups::id.eq(id)).first(c) {
+        Ok(o) => Ok(o),
+        Err(e) => Err(Error::Internal(e.to_string()))
+    }
+}
+
+pub fn update(
+    id: i32,
+    group: &UpdatedGroup,
+    c: &diesel::PgConnection
+) -> Result<Group, Error> {
+    check_group_id(id, c)?;
+    let ret = diesel::update(groups::table.find(id))
+        .set(group)
+        .get_result(c);
+    match ret {
+        Ok(o) => Ok(o),
+        Err(e) => Err(Error::Internal(e.to_string())),
+    }
+}
