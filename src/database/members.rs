@@ -146,3 +146,39 @@ pub fn list_group_admins(
         Err(e) => Err(Error::Internal(e.to_string()))
     }
 }
+
+pub fn destroy_user_group_id(
+    user_id: i32,
+    group_id: i32,
+    c: &diesel::PgConnection
+) -> Result<(), Error> {
+    let ret = diesel::delete(members::table
+            .filter(members::user_id.eq(user_id))
+            .filter(members::group_id.eq(group_id)))
+        .execute(c);
+    match ret {
+        Ok(o) => {
+            match o {
+                1 => Ok(()),
+                0 => Err(Error::NotFound(format!(
+                    "User id:{user_id} is not found in group id:{group_id}"
+                ).to_string())),
+                _ => Err(Error::BadRequest("???".to_string())),
+            }
+        }
+        Err(e) => Err(Error::Internal(e.to_string())),
+    }
+}
+
+pub fn create(
+    member: &NewMember,
+    c: &diesel::PgConnection
+) -> Result<Member, Error> {
+    let ret = diesel::insert_into(members::table)
+        .values(member)
+        .get_result(c);
+    match ret {
+        Ok(o) => Ok(o),
+        Err(e) => Err(Error::Internal(e.to_string())),
+    }
+}
