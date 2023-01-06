@@ -47,3 +47,18 @@ pub fn create(
         Err(e) => Err(Error::Internal(e.to_string()))
     }
 }
+
+pub fn update(
+    id: i32,
+    user: &UpdatedUser,
+    c: &diesel::PgConnection
+) -> Result<User, Error> {
+    check_user_id(id, c)?;
+    let ret = diesel::update(users::table.find(id))
+        .set(user)
+        .get_result(c);
+    match ret {
+        Ok(o) => Ok(o),
+        Err(e) => Err(Error::Internal(e.to_string())),
+    }
+}

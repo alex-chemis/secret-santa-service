@@ -23,6 +23,13 @@ pub fn check_group_id(
     }
 }
 
+pub fn list(c: &diesel::PgConnection) -> Result<Vec<Group>, Error> {
+    match groups::table.load(c) {
+        Ok(o) => Ok(o),
+        Err(e) => Err(Error::Internal(e.to_string()))
+    }
+}
+
 pub fn create(
     group: &NewGroup,
     c: &diesel::PgConnection
