@@ -23,7 +23,7 @@ pub async fn retrieve(
     id: i32,
 ) -> Result<Json<Group>, Error> {
     connection
-        .run(move |c| { Err(Error::NotFound("".to_string())) })
+        .run(move |c| groups::retrieve(id, c))
         .await
         .map(Json)
 }
@@ -46,7 +46,7 @@ pub async fn update(
     group: Json<UpdatedGroup>,
 ) -> Result<Json<Group>, Error> {
     connection
-        .run(move |c| { Err(Error::NotFound("".to_string())) })
+        .run(move |c| groups::update(id, &group, c))
         .await
         .map(Json)
 }

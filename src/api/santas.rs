@@ -6,13 +6,13 @@ use rocket::{
 use crate::{
     models::{santas::*},
     errors::*,
-    database::{PgConnection},
+    database::{PgConnection, santas},
 };
 
 #[get("/")]
 pub async fn list(connection: PgConnection) -> Result<Json<Vec<Santa>>, Error> {
     connection
-        .run(|c| { Err(Error::NotFound("".to_string())) })
+        .run(|c| santas::list(c))
         .await
         .map(Json)
 }
@@ -23,7 +23,7 @@ pub async fn retrieve(
     id: i32,
 ) -> Result<Json<Santa>, Error> {
     connection
-        .run(move |c| { Err(Error::NotFound("".to_string())) })
+        .run(move |c| santas::retrieve(id, c))
         .await
         .map(Json)
 }
@@ -34,7 +34,7 @@ pub async fn create(
     santa: Json<NewSanta>,
 ) -> Result<Created<Json<Santa>>, Error> {
     connection
-        .run(move |c| { Err(Error::NotFound("".to_string())) })
+        .run(move |c| santas::create(&santa, c))
         .await
         .map(|a| Created::new("/").body(Json(a)))
 }
@@ -46,7 +46,7 @@ pub async fn update(
     santa: Json<UpdatedSanta>,
 ) -> Result<Json<Santa>, Error> {
     connection
-        .run(move |c| { Err(Error::NotFound("".to_string())) })
+        .run(move |c| santas::update(id, &santa, c))
         .await
         .map(Json)
 }
@@ -57,7 +57,7 @@ pub async fn destroy(
     id: i32
 ) -> Result<NoContent, Error> {
     connection
-        .run(move |c| { Err::<(), Error>(Error::NotFound("".to_string())) })
+        .run(move |c| santas::destroy(id, c))
         .await
         .map(|_| NoContent)
 }

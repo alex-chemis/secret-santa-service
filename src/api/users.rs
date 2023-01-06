@@ -6,7 +6,7 @@ use rocket::{
 use crate::{
     models::{users::*, groups::*, members::*},
     errors::*,
-    database::{PgConnection, users},
+    database::{PgConnection, users, santas},
 };
 
 #[get("/")]
@@ -69,7 +69,7 @@ pub async fn create_group(
     group: Json<NewGroup>,
 ) -> Result<Created<Json<Group>>, Error> {
     connection
-        .run(move |c| { Err(Error::NotFound("".to_string())) })
+        .run(move |c| users::create_group(id, &group, c))
         .await
         .map(|a| Created::new("/").body(Json(a)))
 }
@@ -81,7 +81,7 @@ pub async fn destroy_group(
     group_id: i32,
 ) -> Result<NoContent, Error> {
     connection
-        .run(move |c| { Err::<(), Error>(Error::NotFound("".to_string())) })
+        .run(move |c| users::destroy_group(id, group_id, c))
         .await
         .map(|_| NoContent)
 }
@@ -93,7 +93,7 @@ pub async fn join_group(
     group_id: i32
 ) -> Result<Created<Json<Member>>, Error> {
     connection
-        .run(move |c| { Err(Error::NotFound("".to_string())) })
+        .run(move |c| users::join_group(id, group_id, c))
         .await
         .map(|a| Created::new("/").body(Json(a)))
 }
@@ -105,7 +105,7 @@ pub async fn leave_group(
     group_id: i32
 ) -> Result<NoContent, Error> {
     connection
-        .run(move |c| { Err::<(), Error>(Error::NotFound("".to_string())) })
+        .run(move |c| users::leave_group(id, group_id, &c))
         .await
         .map(|_| NoContent)
 }
@@ -142,7 +142,7 @@ pub async fn allocate(
     group_id: i32,
 ) -> Result<NoContent, Error> {
     connection
-        .run(move |c| { Err::<(), Error>(Error::NotFound("".to_string())) })
+        .run(move |c| santas::allocate(id, group_id, c))
         .await
         .map(|_| NoContent)
 }
@@ -154,7 +154,7 @@ pub async fn recipient(
     group_id: i32,
 ) -> Result<Json<NamedMember>, Error> {
     connection
-        .run(move |c| { Err(Error::NotFound("".to_string())) })
+        .run(move |c| santas::recipient(id, group_id, c))
         .await
         .map(Json)
 }
