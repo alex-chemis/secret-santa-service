@@ -23,6 +23,26 @@ pub fn check_group_id(
     }
 }
 
+pub fn check_close(
+    id: i32,
+    c: &diesel::PgConnection
+) -> Result<(), Error> {
+    let ret = groups::table
+        .filter(groups::id.eq(id))
+        .filter(groups::is_close.eq(false))
+        .execute(c);
+    match ret {
+        Ok(o) => match o {
+                1 => Ok(()),
+                0 => Err(Error::Forbidden(format!(
+                    "Group id:{id} is close"
+                ).to_string())),
+                _ => Err(Error::BadRequest("???".to_string())),
+            },
+        Err(e) => Err(Error::Internal(e.to_string())),
+    }
+}
+
 pub fn list(c: &diesel::PgConnection) -> Result<Vec<Group>, Error> {
     match groups::table.load(c) {
         Ok(o) => Ok(o),

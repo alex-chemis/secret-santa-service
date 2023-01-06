@@ -88,3 +88,59 @@ pub fn destroy(
         Err(e) => Err(Error::Internal(e.to_string())),
     }
 }
+
+pub fn create_group(
+    user_id: i32,
+    group: &NewGroup,
+    c: &diesel::PgConnection
+) -> Result<Group, Error> {
+    check_user_id(user_id, c)?;
+
+    let ret = database::groups::create(&group, c)?;
+    database::members::create_admin(user_id, ret.id, c)?;
+    Ok(ret)
+}
+
+pub fn destroy_group(
+    user_id: i32,
+    group_id: i32,
+    c: &diesel::PgConnection
+) -> Result<(), Error> {
+    check_user_id(user_id, c)?;
+    database::groups::check_group_id(group_id, c)?;
+    database::members::check_user_and_group_id(user_id, group_id, c)?;
+    database::members::check_permission(user_id, group_id, c)?;
+
+    database::groups::destroy(group_id, c)
+}
+
+pub fn join_group(
+    user_id: i32,
+    group_id: i32,
+    c: &diesel::PgConnection
+) -> Result<Member, Error> {
+    check_user_id(user_id, c)?;
+    database::groups::check_group_id(group_id, c)?;
+    database::groups::check_close(group_id, c)?;
+
+    database::members::create(&NewMember {
+        user_id: user_id,
+        group_id: group_id,
+        is_admin:
+        false 
+    }, c)
+}
+
+pub fn leave_group(
+    user_id: i32,
+    group_id: i32,
+    c: &diesel::PgConnection
+) -> Result<(), Error> {
+    check_user_id(user_id, c)?;
+    database::groups::check_group_id(group_id, c)?;
+    database::members::check_user_and_group_id(user_id, group_id, c)?;
+    database::members::check_leave(user_id, group_id, c)?;
+    database::groups::check_close(group_id, c)?;
+
+    database::members::destroy_user_group_id(user_id, group_id, c)
+}
