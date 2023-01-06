@@ -24,6 +24,13 @@ pub fn check_user_id(
     }
 }
 
+pub fn list(c: &diesel::PgConnection) -> Result<Vec<User>, Error> {
+    match users::table.load(c) {
+        Ok(o) => Ok(o),
+        Err(e) => Err(Error::Internal(e.to_string()))
+    }
+}
+
 pub fn retrieve(
     id: i32,
     c: &diesel::PgConnection
@@ -59,6 +66,25 @@ pub fn update(
         .get_result(c);
     match ret {
         Ok(o) => Ok(o),
+        Err(e) => Err(Error::Internal(e.to_string())),
+    }
+}
+
+pub fn destroy(
+    id: i32,
+    c: &diesel::PgConnection
+) -> Result<(), Error> {
+    let ret = diesel::delete(
+        users::table.filter(users::id.eq(id)))
+        .execute(c);
+    match ret {
+        Ok(o) => {
+            match o {
+                1 => Ok(()),
+                0 => Err(Error::NotFound(format!("Users id:{id} is not found"))),
+                _ => Err(Error::BadRequest("???".to_string())),
+            }
+        }
         Err(e) => Err(Error::Internal(e.to_string())),
     }
 }
