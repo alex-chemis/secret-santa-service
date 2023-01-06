@@ -1,0 +1,8 @@
+-- Your SQL goes here
+
+CREATE TABLE groups (
+    id INT GENERATED ALWAYS AS IDENTITY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    is_close BOOLEAN NOT NULL DEFAULT FALSE,
+    PRIMARY KEY(id)
+);

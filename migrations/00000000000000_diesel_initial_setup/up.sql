@@ -34,25 +34,3 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
-CREATE TABLE IF NOT EXISTS users
-(
-    id      UUID PRIMARY KEY NOT NULL,
-    name    VARCHAR NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS groups
-(
-    id          UUID PRIMARY KEY NOT NULL,
-    name        VARCHAR NOT NULL,
-    is_close    BOOLEAN NOT NULL DEFAULT FALSE
-);
-
-CREATE TABLE IF NOT EXISTS groups_of_users
-(
-    user_id     UUID REFERENCES users(id),
-    group_id    UUID REFERENCES groups(id),
-    id_in_group UUID NOT NULL,
-    is_admin    BOOLEAN NOT NULL DEFAULT FALSE,
-    PRIMARY KEY(user_id, group_id)
-);
