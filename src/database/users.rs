@@ -23,3 +23,27 @@ pub fn check_user_id(
         Err(e) => Err(Error::Internal(e.to_string())),
     }
 }
+
+pub fn retrieve(
+    id: i32,
+    c: &diesel::PgConnection
+) -> Result<User, Error> {
+    check_user_id(id, c)?;
+    match users::table.filter(users::id.eq(id)).first(c) {
+        Ok(o) => Ok(o),
+        Err(e) => Err(Error::Internal(e.to_string()))
+    }
+}
+
+pub fn create(
+    user: &NewUser,
+    c: &diesel::PgConnection
+) -> Result<User, Error> {
+    let ret = diesel::insert_into(users::table)
+        .values(user)
+        .get_result(c);
+    match ret {
+        Ok(o) => Ok(o),
+        Err(e) => Err(Error::Internal(e.to_string()))
+    }
+}
