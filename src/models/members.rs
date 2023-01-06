@@ -29,12 +29,6 @@ pub struct NamedMember {
     pub is_admin: bool,
 }
 
-#[derive(Serialize, Queryable, Debug)]
-#[serde(crate = "rocket::serde")]
-pub struct IdMember {
-    pub id: i32,
-}
-
 #[derive(Deserialize, Insertable, Debug)]
 #[serde(crate = "rocket::serde")]
 #[table_name = "members"]

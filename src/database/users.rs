@@ -150,7 +150,7 @@ pub fn admin_member(
     group_id: i32,
     member_id: i32,
     c: &diesel::PgConnection
-) -> Result<(), Error> {
+) -> Result<Member, Error> {
     check_user_id(user_id, c)?;
     database::groups::check_group_id(group_id, c)?;
     database::members::check_user_and_group_id(user_id, group_id, c)?;
@@ -158,7 +158,9 @@ pub fn admin_member(
     database::members::check_member_id(member_id, c)?;
     database::groups::check_close(group_id, c)?;
 
-    database::members::destroy(member_id, c)
+    database::members::update(member_id, &UpdatedMember {
+        is_admin: Some(false) 
+    }, c)
 }
 
 pub fn unadmin_self(

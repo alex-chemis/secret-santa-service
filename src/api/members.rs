@@ -46,7 +46,7 @@ pub async fn update(
     member: Json<UpdatedMember>,
 ) -> Result<Json<Member>, Error> {
     connection
-        .run(move |c| { Err(Error::NotFound("".to_string())) })
+        .run(move |c| members::update(id, &member, c))
         .await
         .map(Json)
 }

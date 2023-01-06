@@ -168,6 +168,37 @@ pub fn create_admin(
     }
 }
 
+pub fn update(
+    id: i32,
+    member: &UpdatedMember,
+    c: &diesel::PgConnection
+) -> Result<Member, Error> {
+    let ret = diesel::update(members::table.find(id))
+        .set(member)
+        .get_result(c);
+    match ret {
+        Ok(o) => Ok(o),
+        Err(e) => Err(Error::Internal(e.to_string())),
+    }
+}
+
+pub fn update_user_group_id(
+    user_id: i32,
+    group_id: i32,
+    member: &UpdatedMember,
+    c: &diesel::PgConnection
+) -> Result<Member, Error> {
+    let ret = diesel::update(members::table
+            .filter(members::user_id.eq(user_id))
+            .filter(members::group_id.eq(group_id)))
+        .set(member)
+        .get_result(c);
+    match ret {
+        Ok(o) => Ok(o),
+        Err(e) => Err(Error::Internal(e.to_string())),
+    }
+}
+
 pub fn destroy(
     id: i32,
     c: &diesel::PgConnection

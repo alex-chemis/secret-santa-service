@@ -105,7 +105,7 @@ pub async fn leave_group(
     group_id: i32
 ) -> Result<NoContent, Error> {
     connection
-        .run(move |c| users::leave_group(id, group_id, &c))
+        .run(move |c| users::leave_group(id, group_id, c))
         .await
         .map(|_| NoContent)
 }
@@ -118,7 +118,7 @@ pub async fn admin_member(
     member_id: i32
 ) -> Result<NoContent, Error> {
     connection
-        .run(move |c| { Err::<(), Error>(Error::NotFound("".to_string())) })
+        .run(move |c| users::admin_member(id, group_id, member_id, c))
         .await
         .map(|_| NoContent)
 }
@@ -130,7 +130,7 @@ pub async fn unadmin_self(
     group_id: i32,
 ) -> Result<Json<Member>, Error> {
     connection
-        .run(move |c| { Err(Error::NotFound("".to_string())) })
+        .run(move |c| users::unadmin_self(id, group_id, c))
         .await
         .map(Json)
 }
