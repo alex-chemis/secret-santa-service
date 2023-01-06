@@ -12,7 +12,7 @@ use crate::{
 #[get("/")]
 pub async fn list(connection: PgConnection) -> Result<Json<Vec<User>>, Error> {
     connection
-        .run(|c| { Err(Error::NotFound("".to_string())) })
+        .run(|c| users::list(c))
         .await
         .map(Json)
 }
@@ -57,7 +57,7 @@ pub async fn destroy(
     id: i32
 ) -> Result<NoContent, Error> {
     connection
-        .run(move |c| { Err::<(), Error>(Error::NotFound("".to_string())) })
+        .run(move |c| users::destroy(id, c))
         .await
         .map(|_| NoContent)
 }

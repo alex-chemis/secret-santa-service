@@ -6,7 +6,7 @@ use rocket::{
 use crate::{
     models::members::*,
     errors::*,
-    database::{PgConnection}
+    database::{PgConnection, members}
 };
 
 #[get("/")]
@@ -34,7 +34,7 @@ pub async fn create(
     member: Json<NewMember>,
 ) -> Result<Created<Json<Member>>, Error> {
     connection
-        .run(move |c| { Err(Error::NotFound("".to_string())) })
+        .run(move |c| members::create(&member, c))
         .await
         .map(|a| Created::new("/").body(Json(a)))
 }

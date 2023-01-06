@@ -30,12 +30,38 @@ pub fn list(c: &diesel::PgConnection) -> Result<Vec<Group>, Error> {
     }
 }
 
+pub fn retrieve(
+    id: i32,
+    c: &diesel::PgConnection
+) -> Result<Group, Error> {
+    check_group_id(id, c)?;
+    match groups::table.filter(groups::id.eq(id)).first(c) {
+        Ok(o) => Ok(o),
+        Err(e) => Err(Error::Internal(e.to_string()))
+    }
+}
+
 pub fn create(
     group: &NewGroup,
     c: &diesel::PgConnection
 ) -> Result<Group, Error> {
     let ret = diesel::insert_into(groups::table)
         .values(group)
+        .get_result(c);
+    match ret {
+        Ok(o) => Ok(o),
+        Err(e) => Err(Error::Internal(e.to_string())),
+    }
+}
+
+pub fn update(
+    id: i32,
+    group: &UpdatedGroup,
+    c: &diesel::PgConnection
+) -> Result<Group, Error> {
+    check_group_id(id, c)?;
+    let ret = diesel::update(groups::table.find(id))
+        .set(group)
         .get_result(c);
     match ret {
         Ok(o) => Ok(o),
@@ -58,32 +84,6 @@ pub fn destroy(
                 _ => Err(Error::BadRequest("???".to_string())),
             }
         }
-        Err(e) => Err(Error::Internal(e.to_string())),
-    }
-}
-
-pub fn retrieve(
-    id: i32,
-    c: &diesel::PgConnection
-) -> Result<Group, Error> {
-    check_group_id(id, c)?;
-    match groups::table.filter(groups::id.eq(id)).first(c) {
-        Ok(o) => Ok(o),
-        Err(e) => Err(Error::Internal(e.to_string()))
-    }
-}
-
-pub fn update(
-    id: i32,
-    group: &UpdatedGroup,
-    c: &diesel::PgConnection
-) -> Result<Group, Error> {
-    check_group_id(id, c)?;
-    let ret = diesel::update(groups::table.find(id))
-        .set(group)
-        .get_result(c);
-    match ret {
-        Ok(o) => Ok(o),
         Err(e) => Err(Error::Internal(e.to_string())),
     }
 }
