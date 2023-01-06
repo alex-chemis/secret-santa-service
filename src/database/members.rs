@@ -101,3 +101,45 @@ pub fn check_leave(
         }
     }
 }
+
+pub fn list_group_members(
+    group_id: i32,
+    c: &diesel::PgConnection
+) -> Result<Vec<NamedMember>, Error> {
+    let ret = users::table
+        .inner_join(members::table)
+        .select((
+            members::id,
+            users::name,
+            members::group_id,
+            members::is_admin
+        ))
+        .filter(members::group_id.eq(group_id))
+        .filter(members::is_admin.eq(false))
+        .load(c);
+    match ret {
+        Ok(o) => Ok(o),
+        Err(e) => Err(Error::Internal(e.to_string()))
+    }
+}
+
+pub fn list_group_admins(
+    group_id: i32,
+    c: &diesel::PgConnection
+) -> Result<Vec<NamedMember>, Error> {
+    let ret = users::table
+        .inner_join(members::table)
+        .select((
+            members::id,
+            users::name,
+            members::group_id,
+            members::is_admin
+        ))
+        .filter(members::group_id.eq(group_id))
+        .filter(members::is_admin.eq(true))
+        .load(c);
+    match ret {
+        Ok(o) => Ok(o),
+        Err(e) => Err(Error::Internal(e.to_string()))
+    }
+}
