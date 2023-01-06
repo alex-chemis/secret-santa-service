@@ -6,7 +6,7 @@ use rocket::{
 use crate::{
     models::{users::*, groups::*, members::*},
     errors::*,
-    database::{PgConnection},
+    database::{PgConnection, users},
 };
 
 #[get("/")]
@@ -23,7 +23,7 @@ pub async fn retrieve(
     id: i32,
 ) -> Result<Json<User>, Error> {
     connection
-        .run(move |c| { Err(Error::NotFound("".to_string())) })
+        .run(move |c| users::retrieve(id, c))
         .await
         .map(Json)
 }
@@ -34,7 +34,7 @@ pub async fn create(
     user: Json<NewUser>,
 ) -> Result<Created<Json<User>>, Error> {
     connection
-        .run(move |c| { Err(Error::NotFound("".to_string())) })
+        .run(move |c| users::create(&user, c))
         .await
         .map(|a| Created::new("/").body(Json(a)))
 }
@@ -46,7 +46,7 @@ pub async fn update(
     user: Json<UpdatedUser>,
 ) -> Result<Json<User>, Error> {
     connection
-        .run(move |c| { Err(Error::NotFound("".to_string())) })
+        .run(move |c| users::update(id, &user, c))
         .await
         .map(Json)
 }

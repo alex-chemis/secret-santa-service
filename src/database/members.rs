@@ -2,6 +2,7 @@ use diesel::{prelude::*};
 
 use crate::{
     errors::*,
+    database::*,
     models::{members::*},
     schema::{members, users},
 };
@@ -106,6 +107,7 @@ pub fn list_group_members(
     group_id: i32,
     c: &diesel::PgConnection
 ) -> Result<Vec<NamedMember>, Error> {
+    groups::check_group_id(group_id, c)?;
     let ret = users::table
         .inner_join(members::table)
         .select((
@@ -127,6 +129,7 @@ pub fn list_group_admins(
     group_id: i32,
     c: &diesel::PgConnection
 ) -> Result<Vec<NamedMember>, Error> {
+    groups::check_group_id(group_id, c)?;
     let ret = users::table
         .inner_join(members::table)
         .select((

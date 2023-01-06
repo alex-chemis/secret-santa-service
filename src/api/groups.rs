@@ -6,13 +6,13 @@ use rocket::{
 use crate::{
     models::{groups::*, members::*},
     errors::*,
-    database::{PgConnection}
+    database::{PgConnection, groups, members}
 };
 
 #[get("/")]
 pub async fn list(connection: PgConnection) -> Result<Json<Vec<Group>>, Error> {
     connection
-        .run(move |c| { Err(Error::NotFound("".to_string())) })
+        .run(move |c| groups::list(c))
         .await
         .map(Json)
 }
@@ -34,7 +34,7 @@ pub async fn create(
     group: Json<NewGroup>,
 ) -> Result<Created<Json<Group>>, Error> {
     connection
-        .run(move |c| { Err(Error::NotFound("".to_string())) })
+        .run(move |c| groups::create(&group, c))
         .await
         .map(|a| Created::new("/").body(Json(a)))
 }
@@ -57,7 +57,7 @@ pub async fn destroy(
     id: i32
 ) -> Result<NoContent, Error> {
     connection
-        .run(move |c| { Err::<(), Error>(Error::NotFound("".to_string())) })
+        .run(move |c| groups::destroy(id, c))
         .await
         .map(|_| NoContent)
 }
@@ -68,7 +68,7 @@ pub async fn list_group_members(
     id: i32
 ) -> Result<Json<Vec<NamedMember>>, Error> {
     connection
-        .run(move |c| { Err(Error::NotFound("".to_string())) })
+        .run(move |c| members::list_group_members(id, c))
         .await
         .map(Json)
 }
@@ -79,7 +79,7 @@ pub async fn list_group_admins(
     id: i32
 ) -> Result<Json<Vec<NamedMember>>, Error> {
     connection
-        .run(move |c| { Err(Error::NotFound("".to_string())) })
+        .run(move |c| members::list_group_admins(id, c))
         .await
         .map(Json)
 }
