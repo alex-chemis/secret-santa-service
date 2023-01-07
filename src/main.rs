@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate rocket;
 
-use secret_santa_service_example::{api::*, database::PgConnection};
+use secret_santa_service::{api::*, database::PgConnection};
 use rand::Rng;
 
 #[launch]
