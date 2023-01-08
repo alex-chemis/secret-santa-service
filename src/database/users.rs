@@ -159,7 +159,7 @@ pub fn admin_member(
     database::groups::check_close(group_id, c)?;
 
     database::members::update(member_id, &UpdatedMember {
-        is_admin: Some(false) 
+        is_admin: Some(true) 
     }, c)
 }
 
