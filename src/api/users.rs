@@ -116,11 +116,11 @@ pub async fn admin_member(
     id: i32,
     group_id: i32,
     member_id: i32
-) -> Result<NoContent, Error> {
+) -> Result<Json<Member>, Error> {
     connection
         .run(move |c| users::admin_member(id, group_id, member_id, c))
         .await
-        .map(|_| NoContent)
+        .map(Json)
 }
 
 #[put("/<id>/groups/<group_id>/unadmin")]

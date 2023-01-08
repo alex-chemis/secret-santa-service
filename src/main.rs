@@ -7,7 +7,7 @@ use rand::Rng;
 #[launch]
 fn rocket() -> _ {
     let mut rng = rand::thread_rng();
-    let service_key = rng.gen::<i64>() % 9_000_000 + 1_000_000;
+    let service_key = rng.gen::<u64>() % 9_000_000 + 1_000_000;
     
     rocket::build()
         .attach(PgConnection::fairing())
