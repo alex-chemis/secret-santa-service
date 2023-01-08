@@ -1,7 +1,14 @@
 <h1 align="center"> Secret Santa Service </h1>
 
+# Использовавшиеся технологии
+- Rust
+- Web framework Rocket
+- ORM framework Diesel
+- PostgreSQL
+- Docker
+
 # Клиент сервиса
-[secret-santa-client](https://github.com/alex-chemis/secret-santa-client)
+  [secret-santa-client](https://github.com/alex-chemis/secret-santa-client)
 
 # Список группы:
 - Семичев Александр, 3530904/10004, [@alex-chemis](https://github.com/alex-chemis)
